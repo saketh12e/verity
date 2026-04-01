@@ -406,7 +406,6 @@ Each trace shows the full agent execution tree: token usage, latency per node, a
 - Qdrant as self-hosted Pinecone alternative
 
 ---
-
 ## License
 
 MIT
