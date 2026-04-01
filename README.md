@@ -384,28 +384,6 @@ All graph executions are traced to [LangSmith](https://smith.langchain.com) auto
 Each trace shows the full agent execution tree: token usage, latency per node, and state at every step. Set `LANGCHAIN_PROJECT=verity-research` in `.env` to see all runs grouped under one project.
 
 ---
-
-## Roadmap
-
-**V1 — Current**
-- 4 parallel crawlers with source-tier classification
-- Pinecone dedup with cosine similarity (threshold: 0.88)
-- 3-type conflict detection (direct contradiction, temporal shift, scope difference)
-- Devil's Advocate agent challenging top-5 VERIFIED claims
-- Synthesis with VERIFIED / CONTESTED / UNVERIFIED badges
-- Interactive citation graph
-- PDF export
-- SSE live agent feed
-
-**V2 — Planned**
-- Expand to 8 crawlers
-- Temporal Drift Detection as a first-class feature
-- Citation loop detection via Neo4j (circular citations downgraded)
-- Notion as alternate publish target
-- User auth + research history
-- Qdrant as self-hosted Pinecone alternative
-
----
 ## License
 
 MIT
