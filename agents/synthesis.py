@@ -26,6 +26,11 @@ class SynthesisEmptySourcesError(Exception):
     pass
 
 
+class SynthesisEmptySectionsError(Exception):
+    """Raised when the LLM returns valid JSON but with empty sections."""
+    pass
+
+
 # Badge → hex color (single source of truth — frontend reads node_color directly)
 _BADGE_COLORS = {
     "VERIFIED":           "#22c55e",
@@ -99,7 +104,7 @@ def _parse_report(content) -> dict:
     sanitized = _sanitize_json_string(content)
 
     try:
-        return json.loads(sanitized)
+        parsed = json.loads(sanitized)
     except json.JSONDecodeError:
         # Try to fix unescaped newlines in string values
         fixed = sanitized.replace('\n', '\\n').replace('\r', '\\r')
@@ -108,27 +113,56 @@ def _parse_report(content) -> dict:
         fixed = re.sub(r'\\n\s*([{\[\]},:])', lambda m: '\n' + m.group(1), fixed)
         fixed = re.sub(r'([{\[\]},:])\s*\\n', lambda m: m.group(1) + '\n', fixed)
         try:
-            return json.loads(fixed)
+            parsed = json.loads(fixed)
         except json.JSONDecodeError:
-            pass
+            parsed = None
 
-        # Last resort: try extracting just the core fields with regex
-        try:
-            exec_match = re.search(r'"executive_summary"\s*:\s*"((?:[^"\\]|\\.)*)"', sanitized, re.DOTALL)
-            title_match = re.search(r'"title"\s*:\s*"((?:[^"\\]|\\.)*)"', sanitized, re.DOTALL)
-            if exec_match:
-                # Partial extraction worked — build a minimal result
-                return {
-                    "title": title_match.group(1) if title_match else "Research Report",
-                    "executive_summary": exec_match.group(1).replace('\\n', '\n'),
-                    "claims": [],
-                    "sections": [],
-                    "open_questions": [],
-                }
-        except Exception:
-            pass
+        if parsed is None:
+            # Last resort: try extracting just the core fields with regex
+            try:
+                exec_match = re.search(r'"executive_summary"\s*:\s*"((?:[^"\\]|\\.)*)"', sanitized, re.DOTALL)
+                title_match = re.search(r'"title"\s*:\s*"((?:[^"\\]|\\.)*)"', sanitized, re.DOTALL)
+                if exec_match:
+                    # Partial extraction worked — build a minimal result
+                    parsed = {
+                        "title": title_match.group(1) if title_match else "Research Report",
+                        "executive_summary": exec_match.group(1).replace('\\n', '\n'),
+                        "claims": [],
+                        "sections": [],
+                        "open_questions": [],
+                    }
+            except Exception:
+                pass
 
-        raise
+        if parsed is None:
+            raise json.JSONDecodeError("Could not parse LLM response as JSON", sanitized[:200], 0)
+
+    # ── Rescue sections from truncated JSON ───────────────────────────────
+    # If the LLM output was truncated, sections may be empty even though
+    # section content exists in the raw text. Try to extract them.
+    if not parsed.get("sections") and '"heading"' in sanitized and '"content"' in sanitized:
+        logger.debug("Attempting to rescue sections from truncated JSON")
+        section_pattern = re.finditer(
+            r'\{\s*"heading"\s*:\s*"((?:[^"\\]|\\.)*)"\s*,\s*"content"\s*:\s*"((?:[^"\\]|\\.)*)"',
+            sanitized,
+            re.DOTALL,
+        )
+        rescued_sections = []
+        for m in section_pattern:
+            heading = m.group(1).replace('\\n', '\n').strip()
+            content = m.group(2).replace('\\n', '\n').strip()
+            if heading and content and len(content) > 20:
+                rescued_sections.append({
+                    "heading": heading,
+                    "content": content,
+                    "claims_referenced": [],
+                    "sources": [],
+                })
+        if rescued_sections:
+            logger.info("Rescued %d sections from truncated JSON", len(rescued_sections))
+            parsed["sections"] = rescued_sections
+
+    return parsed
 
 
 def _build_readable_findings(reports: list[ConflictReport], max_chars: int = 400) -> str:
@@ -196,12 +230,19 @@ async def _invoke_synthesis_llm(
         timeout=90.0,
     )
 
-    parsed = _parse_report(response.content)
+    raw_content = response.content
+    if isinstance(raw_content, list):
+        content_len = sum(len(p.get("text", "")) if isinstance(p, dict) else len(str(p)) for p in raw_content)
+    else:
+        content_len = len(raw_content) if raw_content else 0
+    logger.info("[%s] Synthesis: LLM response length=%d chars", job_id, content_len)
+
+    parsed = _parse_report(raw_content)
 
     # Validate sections are present — if empty, this is incomplete
     if not parsed.get("sections"):
         logger.warning("[%s] Synthesis: LLM returned empty sections — will retry", job_id)
-        raise json.JSONDecodeError("Empty sections array", "", 0)
+        raise SynthesisEmptySectionsError("LLM returned valid JSON but sections array is empty")
 
     return parsed
 
@@ -451,10 +492,10 @@ async def synthesis_node(state: ResearchState) -> dict:
             unverified, sources, max_content_chars=400, job_id=job_id,
         )
         logger.info("[%s] Synthesis: LLM call succeeded (400 char truncation)", job_id)
-    except json.JSONDecodeError as e:
+    except (json.JSONDecodeError, SynthesisEmptySectionsError) as e:
         logger.warning(
-            "[%s] Synthesis: JSON parse failed on first attempt (400 chars): %s\n%s",
-            job_id, e, traceback.format_exc(),
+            "[%s] Synthesis: parse/validation failed on first attempt (400 chars): %s",
+            job_id, e,
         )
         # Retry with shorter truncation
         try:
@@ -464,9 +505,9 @@ async def synthesis_node(state: ResearchState) -> dict:
             )
             logger.info("[%s] Synthesis: LLM retry succeeded (200 char truncation)", job_id)
         except Exception as retry_err:
-            logger.error(
-                "[%s] Synthesis: LLM retry also failed (200 chars): %s\n%s",
-                job_id, retry_err, traceback.format_exc(),
+            logger.warning(
+                "[%s] Synthesis: LLM retry also failed (200 chars): %s",
+                job_id, retry_err,
             )
             parsed = None
     except asyncio.TimeoutError:

@@ -25,7 +25,7 @@ def get_reasoning_llm() -> ChatGoogleGenerativeAI:
             model=os.getenv("GEMINI_REASONING_MODEL", "gemini-3.1-pro-preview"),
             google_api_key=os.getenv("GOOGLE_API_KEY"),
             temperature=0.1,
-            max_output_tokens=8192,
+            max_output_tokens=16384,
         )
     return _reasoning_llm
 
