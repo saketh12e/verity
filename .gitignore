@@ -1,8 +1,9 @@
-# Environment
+# ── Secrets & Environment ─────────────────────────────────────────────────────
 .env
 .env.local
+.env.*.local
 
-# Python
+# ── Python ────────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
@@ -14,36 +15,56 @@ dist/
 .eggs/
 *.egg
 
-# Virtual environments
+# ── Virtual environments ──────────────────────────────────────────────────────
 .venv/
 venv/
 env/
-
-# uv
 .uv/
 
-# IDE
+# ── IDE ───────────────────────────────────────────────────────────────────────
 .vscode/
 .idea/
 *.swp
 *.swo
 
-# OS
+# ── OS ────────────────────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
 
-# Testing
+# ── Testing ───────────────────────────────────────────────────────────────────
 .pytest_cache/
 .coverage
 htmlcov/
 
-# Frontend
+# ── Frontend ──────────────────────────────────────────────────────────────────
 frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# LangSmith / LangChain
+# ── LangGraph runtime state ───────────────────────────────────────────────────
+.langgraph_api/
+
+# ── LangSmith / LangChain ─────────────────────────────────────────────────────
 .langchain/
 
-# Pinecone
+# ── Pinecone ──────────────────────────────────────────────────────────────────
 .pinecone/
+
+# ── Generated reports (runtime output) ───────────────────────────────────────
+reports/
+
+# ── Claude Code files ─────────────────────────────────────────────────────────
+.claude/
+CLAUDE.md
+CLAUDE_V2.md
+.remember/
+
+# ── Planning / phase docs (internal) ─────────────────────────────────────────
+QMA_Phase*.md
+crawler_system_fix.md
+
+# ── Downloaded plugins / skills ───────────────────────────────────────────────
+fusengine-agents-react-shadcn-1.0.2/
+
+# ── Original logo with spaces (use verity-logo.jpg instead) ──────────────────
+verity logo.jpg
