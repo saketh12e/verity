@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="verity-logo.jpg" alt="Verity Logo" width="180" />
+  <img src="verity logo.jpg" alt="Verity Logo" width="180" />
   <h1>Verity</h1>
   <p><strong>Research that knows what it doesn't know.</strong></p>
 
