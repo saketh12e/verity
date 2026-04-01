@@ -1,0 +1,44 @@
+[project]
+name = "verity"
+version = "2.0.0"
+description = "Deep research intelligence agent with source conflict detection"
+requires-python = ">=3.11"
+
+dependencies = [
+    # Orchestration
+    "langgraph>=0.2.0",
+    "langchain-google-genai>=2.0.0",
+    "langsmith>=0.1.0",
+    # Google AI (for embeddings via google.genai)
+    "google-genai>=1.0.0",
+    # Web research
+    "firecrawl-py>=1.0.0",
+    "tavily-python>=0.3.0",
+    # Vector DB
+    "pinecone>=3.0.0",
+    # Citation graph
+    "networkx>=3.2",
+    # Backend
+    "fastapi[standard]>=0.110.0",
+    "uvicorn[standard]>=0.29.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.0.0",
+    "httpx>=0.27.0",
+    "weasyprint>=68.1",
+    "reportlab>=4.4.10",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["agents", "graph", "api", "services"]
+
+[dependency-groups]
+dev = [
+    "langgraph-cli[inmem]>=0.4.19",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-mock>=3.12.0",
+]

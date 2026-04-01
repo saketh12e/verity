@@ -1,0 +1,58 @@
+{
+  "job_id": "7452b082-05be-4566-8ab1-4da57bc501bd",
+  "query": "Are AI coding assistants like Cursor and GitHub Copilot making junior developers worse at fundamentals in 2025-2026?",
+  "generated_at": "2026-03-31T07:44:38.211601+00:00",
+  "report": {
+    "title": "Research Report: The Impact of AI Coding Assistants on Junior Developer Skills",
+    "summary": "Evidence consistently shows that AI coding assistants significantly increase the speed of junior developers. However, the impact on fundamental skills and code quality remains uncertain. While multiple sources confirm a risk of skill atrophy, other reports suggest a shift toward higher-level skills, and evidence is divided on whether these tools improve or degrade code security.",
+    "sections": [
+      {
+        "heading": "Productivity and Workflow",
+        "content": "Research consistently finds that AI coding assistants increase developer productivity, particularly for junior developers. A controlled experiment found that developers using GitHub Copilot completed tasks 55.8% faster than a control group, with less experienced developers seeing the largest gains [VERIFIED]. One source suggests these tools allow developers to offload routine tasks and focus on more significant problems [UNVERIFIED]. This changes the nature of development work, as one study noted that using AI decreased active coding time and shifted it toward interacting with the AI and understanding its suggestions [UNVERIFIED]. Several studies indicate that these assistants also lower the entry barrier for new developers by providing a starting point for tasks [UNVERIFIED]. However, a single report from a nonprofit research group found that AI coding tools may slow developers down, challenging the consensus on productivity gains [UNVERIFIED].",
+        "claims_referenced": [
+          "720b5bdc",
+          "2565da3a",
+          "bf545c08",
+          "04c1f40a",
+          "6cf8c6f4"
+        ]
+      },
+      {
+        "heading": "Code Quality and Security",
+        "content": "The effect of AI assistants on code quality and security is a point of significant contention. Evidence is divided regarding the prevalence of security vulnerabilities in AI-generated code. An early study by Pearce et al. found that 40% of code from GitHub Copilot was vulnerable [CONTESTED]; however, a 2023 replication study observed this rate had decreased to 27.25%, suggesting improvement over time [CONTESTED]. This reflects a temporal_shift, where the security of AI suggestions has evolved as the underlying models are updated. Other single-source studies reinforce security concerns, with one finding that AI suggestions led to 10% more security bugs in C code [UNVERIFIED] and another security firm reporting that developers using AI produce ten times more security problems [UNVERIFIED]. Conversely, other research suggests a positive impact on quality. One controlled experiment found that participants using an AI assistant produced code with fewer bugs and code smells [UNVERIFIED], while another study found a group using ChatGPT produced higher quality code on specific tasks [UNVERIFIED]. Despite potential benefits, debugging incorrect AI-generated code is reported to be a challenging task [UNVERIFIED].",
+        "claims_referenced": [
+          "0687a074",
+          "c2971ba3",
+          "1a6189e5",
+          "bf8e70f3",
+          "31865780",
+          "aa10a12d",
+          "8865caa9"
+        ]
+      },
+      {
+        "heading": "Skill Development and Learning",
+        "content": "The central question of whether AI assistants degrade fundamental skills is unresolved, with evidence pointing toward both risks and opportunities. Multiple sources confirm that AI coding assistants introduce a risk of skill atrophy among developers [VERIFIED]. One study suggests that by avoiding errors, developers using AI may miss out on learning opportunities; the control group in this study encountered more errors, which likely improved their skill formation when resolved independently [UNVERIFIED]. This supports the concern that over-reliance on AI could weaken foundational knowledge. On the other hand, some sources propose a skill shift rather than simple atrophy. One report posits that developers must be upskilled to supervise AI tools effectively, moving their focus to higher-level review and system design [UNVERIFIED]. Several unverified reports highlight the learning benefits, framing the tools as an \"always-available mentor\" [UNVERIFIED], a way to navigate large, unfamiliar codebases [UNVERIFIED], and a method for brainstorming solutions [UNVERIFIED].",
+        "claims_referenced": [
+          "02b6d9ea",
+          "676a4698",
+          "a3648522",
+          "6b08c077",
+          "74c67584",
+          "e6be25a5"
+        ]
+      }
+    ],
+    "open_questions": [
+      "What is the long-term impact on a junior developer's fundamental coding abilities after 3-5 years of continuous reliance on AI assistants?",
+      "How does the rate of security vulnerabilities in AI-generated code change as models are fine-tuned on proprietary, high-quality enterprise codebases versus public data?",
+      "Which specific governance policies and training programs are most effective at mitigating skill atrophy while maximizing the productivity benefits of AI assistants?",
+      "Does the initial productivity boost from AI assistants hold up when factoring in the total time spent on debugging, validating, and securing the generated code over a project's lifecycle?",
+      "To what extent does the 'skill shift' toward AI supervision and prompt engineering compensate for a potential decline in traditional coding fundamentals in terms of career progression and value?"
+    ],
+    "total_sources": 13,
+    "verified_count": 5,
+    "contested_count": 3,
+    "unverified_count": 22
+  }
+}
